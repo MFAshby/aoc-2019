@@ -31,8 +31,7 @@ L1007,D620,R853,U77,L13,U473,L253,D410,R897,U464,L862,U281,L650,D470,R87,D204,L8
   "applies an instruction to a path, and returns the new path"
   [path instruction]
   (let [[unit distance] (parse-instruction instruction)]
-    (println "Applying instruction" instruction)
-    (reduce (fn [p ig] (conj p (v-add (peek p) unit))) path (range distance))))  ;; Need to use peek here instead of last, for performance reasons :( 
+    (reduce (fn [p ig] (conj p (v-add (peek p) unit))) path (range distance))))  ;; Need to use peek here instead of last, for performance reasons :
 
 (defn trace-path 
   "Converts a wire definition to a series of points"
@@ -40,22 +39,42 @@ L1007,D620,R853,U77,L13,U473,L253,D410,R897,U464,L862,U281,L650,D470,R87,D204,L8
   (reduce apply-path-instruction ['(0 0)] (split wire #",")))
 
 (defn find-crossovers
-  [wires]
-  (let [[w1 w2] (split wires #"\n")
-        p1 (set (trace-path w1))
-        p2 (set (trace-path w2))
-        crosses (intersection p1 p2)]
+  "Find the intersections on two paths, excluding the origin"
+  [p1 p2]
+  (let [crosses (intersection (set p1) (set p2))]
       (remove #(= '(0 0) %) crosses)))
 
 (defn manhattan-dist
   "Calculates the manhatten distance from the origin"
-  [pt]
+  [pt & ignored]
   (apply + (map #(Math/abs %) pt)))
+
+(defn signal-dist 
+  "Calculates the total distance along the path/s from the origin to a given point"
+  ([pt p1]
+    (.indexOf p1 pt))
+  ([pt p1 p2]
+    (+ (signal-dist pt p1) (signal-dist pt p2))))
+
+(defn min-dist 
+  [wires dist-function]
+  (let [[w1 w2] (split wires #"\n")
+        [p1 p2] (map trace-path [w1 w2])]
+    (apply min (for [cross (find-crossovers p1 p2)] (dist-function cross p1 p2)))))
 
 (defn min-manhatten-dist
   [wires]
-  (apply min (for [cross (find-crossovers wires)] (manhattan-dist cross))))
+  (min-dist wires manhattan-dist))
+
+(defn min-signal-dist
+  [wires]
+  (min-dist wires signal-dist))
 
 (defn run-pt1
   []
   (println (min-manhatten-dist input)))
+
+; pt2, we need to calculate the distance along the wire to get to the intersection point
+(defn run-pt2
+  []
+  (println (min-signal-dist input)))

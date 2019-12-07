@@ -15,4 +15,5 @@
     [2 1] (ex2/run-pt1)
     [2 2] (ex2/run-pt2)
     [3 1] (ex3/run-pt1)
+    [3 2] (ex3/run-pt2)
     [_ _] (println "Unknown exercise!")))
