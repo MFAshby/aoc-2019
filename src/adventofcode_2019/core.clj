@@ -4,6 +4,7 @@
     [clojure.core.match :refer [match]]
     [adventofcode-2019.ex1 :as ex1]
     [adventofcode-2019.ex2 :as ex2]
+    [adventofcode-2019.ex3 :as ex3]
     ))
 
 (defn -main
@@ -13,4 +14,5 @@
     [1 _] (ex1/run)
     [2 1] (ex2/run-pt1)
     [2 2] (ex2/run-pt2)
+    [3 1] (ex3/run-pt1)
     [_ _] (println "Unknown exercise!")))

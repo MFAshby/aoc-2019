@@ -59,8 +59,8 @@
 
 (defn run-pt2
   []
-  (println (for [noun (range 100)
+  (println (first (for [noun (range 100)
         verb (range 100)
         :let [result (san-and-run noun verb)]
         :when (= result 19690720)] 
-        [(+ (* 100 noun) verb)])))
+        (+ (* 100 noun) verb)))))
